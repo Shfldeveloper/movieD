@@ -18,17 +18,26 @@ const schema = mongoose.Schema({
         type: String,
         required: true,
     },
+    cast: {
+        type: String,
+        required: true,
+    },
     // price : {
     //     type : Number,
     //     // required : true,
     // },
+    creator: {
+        type:mongoose.Types.ObjectId,
+        ref : 'User',
+        required : true,
+    },
     status: {
         type: String,
         required: true,
     },
     categoryID: {
         type: mongoose.Types.ObjectId,
-        ref: 'category',
+        ref: 'Category',
         required: true,
     },
 

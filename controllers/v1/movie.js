@@ -55,3 +55,20 @@ exports.getAllEpisodes = async (req, res) => {
     const episodes = await episodeModel.find().populate('movie', 'name')
     res.status(200).json(episodes)
 }
+
+exports.getEpisodeInfo = async (req, res) => {
+    const movie = await movieModel.findOne({ href: req.params.href }).lean()
+    const episode = await episodeModel.findById({ _id: req.params.episodeID })
+    const allEpisodes = await episodeModel.find({ movie: movie._id })
+    return res.status(200).json(episode, allEpisodes)
+}
+
+exports.deleteEpisode = async (req, res) => {
+    const deletedEpisode = await episodeModel.findOneAndDelete({_id : req.params.id})
+
+    if(!deletedEpisode){
+        res.status(505).json({message : 'episode not found'})
+    }
+
+    res.json(deletedEpisode)
+}

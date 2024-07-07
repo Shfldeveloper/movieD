@@ -34,4 +34,7 @@ router
     )
 
 
+router.route("/:href/:episodeID").get(movieController.getEpisodeInfo )
+
+router.route('/episode/:id').delete(authMiddleware,isAdminMiddleware,movieController.deleteEpisode)
 module.exports = router

@@ -1,4 +1,5 @@
 const movieModel = require('../../models/movie')
+const categoryModel = require('../../models/category')
 const episodeModel = require('./../../models/episode')
 
 exports.create = async (req, res) => {
@@ -64,11 +65,28 @@ exports.getEpisodeInfo = async (req, res) => {
 }
 
 exports.deleteEpisode = async (req, res) => {
-    const deletedEpisode = await episodeModel.findOneAndDelete({_id : req.params.id})
+    const deletedEpisode = await episodeModel.findOneAndDelete({ _id: req.params.id })
 
-    if(!deletedEpisode){
-        res.status(505).json({message : 'episode not found'})
+    if (!deletedEpisode) {
+        res.status(505).json({ message: 'episode not found' })
     }
 
     res.json(deletedEpisode)
+}
+
+exports.getMovieByCategory = async (req, res) => {
+    const { href } = req.params
+    
+    const category = await categoryModel.findOne({href})
+    
+    if(!category){
+        return res.json({message : "category is not valid ..."})
+    }
+
+
+    const movies = await movieModel.find({
+        categoryID : category._id
+    })
+
+    res.status(200).json(movies)
 }

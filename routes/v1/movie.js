@@ -9,6 +9,8 @@ const isAdminMiddleware = require('../../middlewares/isAdmin')
 
 const router = express.Router()
 
+router.route("/category/:href").get(movieController.getMovieByCategory)
+
 router
     .route('/')
     .post(authMiddleware,
@@ -35,6 +37,8 @@ router
 
 
 router.route("/:href/:episodeID").get(movieController.getEpisodeInfo )
+
+
 
 router.route('/episode/:id').delete(authMiddleware,isAdminMiddleware,movieController.deleteEpisode)
 module.exports = router

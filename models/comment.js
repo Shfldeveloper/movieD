@@ -8,12 +8,12 @@ const schema = mongoose.Schema({
     },
     movie : {
         type : mongoose.Types.ObjectId,
-        ref : "movie",
+        ref : "Movie",
         required : true,
     },
     creator : {
         type : mongoose.Types.ObjectId,
-        ref : "user",
+        ref : "User",
         required : true,
     },
     isAccept : {
@@ -30,10 +30,10 @@ const schema = mongoose.Schema({
     },
     mainCommentID :{
         type : mongoose.Types.ObjectId,
-        ref : "comment",
+        ref : "Comment",
     }
 },{timestamps : true})
 
-const model = mongoose.model('comment' , schema)
+const model = mongoose.model('Comment' , schema)
 
 module.exports = model

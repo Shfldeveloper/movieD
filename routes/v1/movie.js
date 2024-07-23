@@ -19,6 +19,7 @@ router
         movieController.create)
 
 
+router.route("/:href").get(movieController.getOne)
 router
     .route('/:id/episode')
     .post(authMiddleware,

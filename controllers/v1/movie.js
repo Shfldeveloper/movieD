@@ -1,6 +1,7 @@
 const movieModel = require('../../models/movie')
 const categoryModel = require('../../models/category')
 const episodeModel = require('./../../models/episode')
+const commentModel = require('./../../models/comment')
 
 exports.create = async (req, res) => {
     const {
@@ -30,6 +31,24 @@ exports.create = async (req, res) => {
     return res.status(201).json(mainMovie)
 
 
+}
+
+exports.getOne = async (req, res) => {
+    const { href } = req.params
+
+    const movie = await movieModel.findOne({ href }).populate("creator", "-password").populate("categoryID")
+
+    const episodes = await episodeModel.find({ movie: movie._id }).lean()
+
+    const comments = await commentModel.find({ movie: movie._id  , isAccept : 1}).populate("creator", "-password")
+
+    console.log(comments)
+
+    if (!movie) {
+        return res.json({ message: "there is no such movie by this name" })
+    }
+
+    return res.status(200).json({ movie, episodes , comments})
 }
 
 exports.createEpisode = async (req, res) => {
@@ -76,17 +95,18 @@ exports.deleteEpisode = async (req, res) => {
 
 exports.getMovieByCategory = async (req, res) => {
     const { href } = req.params
-    
-    const category = await categoryModel.findOne({href})
-    
-    if(!category){
-        return res.json({message : "category is not valid ..."})
+
+    const category = await categoryModel.findOne({ href })
+
+    if (!category) {
+        return res.json({ message: "category is not valid ..." })
     }
 
 
     const movies = await movieModel.find({
-        categoryID : category._id
+        categoryID: category._id
     })
 
-    res.status(200).json(movies)
+    return res.status(200).json(movies)
 }
+

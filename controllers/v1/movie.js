@@ -42,7 +42,13 @@ exports.getOne = async (req, res) => {
 
     const comments = await commentModel.find({ movie: movie._id  , isAccept : 1}).populate("creator", "-password")
 
-    console.log(comments)
+    console.log(episodes)
+    if(req.user == false || req.subscription == false){
+        const freeEpisodes = episodes.filter(obj => obj.free == 1)
+
+        return res.status(200).json({ movie, freeEpisodes , comments})
+
+    }
 
     if (!movie) {
         return res.json({ message: "there is no such movie by this name" })

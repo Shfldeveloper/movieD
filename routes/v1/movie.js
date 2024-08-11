@@ -4,6 +4,8 @@ const multerStorage = require('../../utils/uploder')
 const movieController = require('../../controllers/v1/movie')
 const authMiddleware = require('./../../middlewares/auth')
 const isAdminMiddleware = require('../../middlewares/isAdmin')
+const userStatusMiddleware = require('../../middlewares/userStatus')
+const isSubscripedMiddleware = require('../../middlewares/isSubscriped')
 
 
 
@@ -19,7 +21,7 @@ router
         movieController.create)
 
 
-router.route("/:href").get(movieController.getOne)
+
 router
     .route('/:id/episode')
     .post(authMiddleware,
@@ -38,6 +40,8 @@ router
 
 
 router.route("/:href/:episodeID").get(movieController.getEpisodeInfo )
+
+router.route("/:href").get(userStatusMiddleware,isSubscripedMiddleware,movieController.getOne)
 
 
 

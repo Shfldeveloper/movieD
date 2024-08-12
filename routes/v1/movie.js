@@ -21,7 +21,7 @@ router
         movieController.create)
 
 
-
+router.route("/:id").delete(authMiddleware,isAdminMiddleware,movieController.remove)
 router
     .route('/:id/episode')
     .post(authMiddleware,

@@ -2,6 +2,7 @@ const movieModel = require('../../models/movie')
 const categoryModel = require('../../models/category')
 const episodeModel = require('./../../models/episode')
 const commentModel = require('./../../models/comment')
+const mongoose = require('mongoose')
 
 exports.create = async (req, res) => {
     const {
@@ -40,13 +41,13 @@ exports.getOne = async (req, res) => {
 
     const episodes = await episodeModel.find({ movie: movie._id }).lean()
 
-    const comments = await commentModel.find({ movie: movie._id  , isAccept : 1}).populate("creator", "-password")
+    const comments = await commentModel.find({ movie: movie._id, isAccept: 1 }).populate("creator", "-password")
 
     console.log(episodes)
-    if(req.user == false || req.subscription == false){
+    if (req.user == false || req.subscription == false) {
         const freeEpisodes = episodes.filter(obj => obj.free == 1)
 
-        return res.status(200).json({ movie, freeEpisodes , comments})
+        return res.status(200).json({ movie, freeEpisodes, comments })
 
     }
 
@@ -54,7 +55,7 @@ exports.getOne = async (req, res) => {
         return res.json({ message: "there is no such movie by this name" })
     }
 
-    return res.status(200).json({ movie, episodes , comments})
+    return res.status(200).json({ movie, episodes, comments })
 }
 
 exports.createEpisode = async (req, res) => {
@@ -116,3 +117,19 @@ exports.getMovieByCategory = async (req, res) => {
     return res.status(200).json(movies)
 }
 
+exports.remove = async (req, res) => {
+    
+    const movieId = req.params.id
+    
+    const isObjectIdValid = mongoose.Types.ObjectId.isValid(movieId)
+
+    if(!isObjectIdValid){
+        return res.status(400).json({message : "the given id is not valid"})
+    }
+    const deletedMovie = await movieModel.deleteOne({_id : movieId})
+
+    if(!deletedMovie){
+        return res.status(404).json({message : "this is no such movie with this id..."})
+    }
+    return res.status(200).json(deletedMovie)
+}

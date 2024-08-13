@@ -21,7 +21,10 @@ router
         movieController.create)
 
 
+        
+router.route('/related/:href').get(movieController.getRelated)
 router.route("/:id").delete(authMiddleware,isAdminMiddleware,movieController.remove)
+
 router
     .route('/:id/episode')
     .post(authMiddleware,

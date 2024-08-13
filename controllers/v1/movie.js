@@ -118,18 +118,29 @@ exports.getMovieByCategory = async (req, res) => {
 }
 
 exports.remove = async (req, res) => {
-    
+
     const movieId = req.params.id
-    
+
     const isObjectIdValid = mongoose.Types.ObjectId.isValid(movieId)
 
-    if(!isObjectIdValid){
-        return res.status(400).json({message : "the given id is not valid"})
+    if (!isObjectIdValid) {
+        return res.status(400).json({ message: "the given id is not valid" })
     }
-    const deletedMovie = await movieModel.deleteOne({_id : movieId})
+    const deletedMovie = await movieModel.deleteOne({ _id: movieId })
 
-    if(!deletedMovie){
-        return res.status(404).json({message : "this is no such movie with this id..."})
+    if (!deletedMovie) {
+        return res.status(404).json({ message: "this is no such movie with this id..." })
     }
     return res.status(200).json(deletedMovie)
+}
+
+exports.getRelated = async (req, res) => {
+    const href = req.params.href
+    const movie = await movieModel.findOne({href : href})
+    if(!movie){
+        return res.status(404).json({message : "movie not found..."})
+    }
+    const sameCategory = await movieModel.find({categoryID : movie.categoryID})
+    const relatedMovies = sameCategory.filter(obj => obj.href != href)
+    res.json(relatedMovies)
 }

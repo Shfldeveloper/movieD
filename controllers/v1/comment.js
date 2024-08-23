@@ -10,7 +10,6 @@ exports.addComment = async (req, res) => {
 
     res.status(201).json(comment)
 }
-
 exports.remove = async (req, res) => {
     const commentID = req.params.id
     const isIdValid = mongoose.Types.ObjectId.isValid(commentID)
@@ -20,16 +19,15 @@ exports.remove = async (req, res) => {
     const deletedComment = await commentModel.deleteOne({ _id: commentID })
     return res.json(deletedComment)
 }
-
 exports.accept = async (req, res) => {
     const isIdValid = mongoose.Types.ObjectId.isValid(req.params.id)
-    
-    if(!isIdValid){
-        return res.status(402).json({message : "the id that given is not valid."})
+
+    if (!isIdValid) {
+        return res.status(402).json({ message: "the id that given is not valid." })
     }
 
-    const acceptedComment = await commentModel.findOneAndUpdate({_id : req.params.id},{
-        isAccept : 1
+    const acceptedComment = await commentModel.findOneAndUpdate({ _id: req.params.id }, {
+        isAccept: 1
     })
 
     return res.status(201).json(acceptedComment)
@@ -38,14 +36,39 @@ exports.accept = async (req, res) => {
 exports.reject = async (req, res) => {
 
     const isIdValid = mongoose.Types.ObjectId.isValid(req.params.id)
-    
-    if(!isIdValid){
-        return res.status(402).json({message : "the id that given is not valid."})
+
+    if (!isIdValid) {
+        return res.status(402).json({ message: "the id that given is not valid." })
     }
 
-    const rejectedComment = await commentModel.findOneAndUpdate({_id : req.params.id},{
-        isAccept : 0
+    const rejectedComment = await commentModel.findOneAndUpdate({ _id: req.params.id }, {
+        isAccept: 0
     })
 
     return res.status(201).json(rejectedComment)
+}
+exports.answer = async (req, res) => {
+    const id = req.params.id
+    const { body } = req.body
+    const isIDValid = mongoose.Types.ObjectId.isValid(id)
+
+    if (!isIDValid) {
+        return res.status(401).json({ message: "the given id is not valid." })
+    }
+    const acceptComment = await commentModel.findOneAndUpdate({ _id: id }, {
+        isAccept: 1
+    })
+
+    const answerComment = await commentModel.create({
+        body,
+        movie: acceptComment.movie,
+        creator: req.user._id,
+        isAccept: 1,
+        isAnswer: 1,
+        mainCommentID : id
+    })
+
+    return res.status(201).json(answerComment)
+
+
 }

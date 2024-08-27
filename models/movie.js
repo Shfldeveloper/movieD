@@ -60,6 +60,6 @@ schema.virtual('comments',
     }
 )
 
-const model = mongoose.model('movie', schema)
+const model = mongoose.model('Movie', schema)
 
 module.exports = model

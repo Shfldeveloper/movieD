@@ -65,10 +65,29 @@ exports.answer = async (req, res) => {
         creator: req.user._id,
         isAccept: 1,
         isAnswer: 1,
-        mainCommentID : id
+        mainCommentID: id
     })
 
     return res.status(201).json(answerComment)
 
 
+}
+exports.getAll = async (req, res) => {
+    let comments = await commentModel.find({}).populate('movie').populate('creator','-password').lean()
+    let newComments = []
+    for(let i = 0 ; i< comments.length ; i++){
+        for (let j =0 ;j< comments.lenght ; j++){
+            if(comments[i].isAnswer == 0 && (com[j].isAnswer == 1 && com[j].mainCommentID == comments[i]._id)){
+                comments[i].answers += com[j]
+                console.log(comments[i])
+            }else{
+                console.log(comments[i])
+                newComments.push(comments[i])
+            }
+        }
+        newComments.push(comments[i])
+    }
+
+
+    res.json(newComments)
 }

@@ -8,7 +8,6 @@ const userStatusMiddleware = require('../../middlewares/userStatus')
 const isSubscripedMiddleware = require('../../middlewares/isSubscriped')
 
 
-
 const router = express.Router()
 
 router.route("/category/:href").get(movieController.getMovieByCategory)

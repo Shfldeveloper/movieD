@@ -5,7 +5,7 @@ const isAdminMiddleware = require('../../middlewares/isAdmin')
 
 const router = express.Router()
 
-router.route("/").post(authMiddleware,commentController.addComment)
+router.route("/").post(authMiddleware,commentController.addComment).get(authMiddleware,isAdminMiddleware,commentController.getAll)
 router.route("/:id").delete(authMiddleware,isAdminMiddleware,commentController.remove)
 router.route("/:id/accept").put(authMiddleware,isAdminMiddleware,commentController.accept)
 router.route("/:id/reject").put(authMiddleware,isAdminMiddleware,commentController.reject)

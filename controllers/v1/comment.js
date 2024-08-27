@@ -74,20 +74,30 @@ exports.answer = async (req, res) => {
 }
 exports.getAll = async (req, res) => {
     let comments = await commentModel.find({}).populate('movie').populate('creator','-password').lean()
-    let newComments = []
-    for(let i = 0 ; i< comments.length ; i++){
-        for (let j =0 ;j< comments.lenght ; j++){
-            if(comments[i].isAnswer == 0 && (com[j].isAnswer == 1 && com[j].mainCommentID == comments[i]._id)){
-                comments[i].answers += com[j]
-                console.log(comments[i])
-            }else{
-                console.log(comments[i])
-                newComments.push(comments[i])
+    let organizedComments = []
+
+    comments.forEach(comment => {
+        if (comment.isAnswer === 0) {
+            // If it's a main comment, add it to the organized array
+            organizedComments.push({
+                ...comment,
+                answers: [] // Initialize an empty array for answers
+            });
+        }
+    });
+
+    comments.forEach(comment => {
+        if (comment.isAnswer === 1) {
+            // If it's an answer, find the main comment and add it to its answers
+            const mainComment = organizedComments.find(c => c.id === comment.mainCommentId);
+            if (mainComment) {
+                mainComment.answers.push(comment);
             }
         }
-        newComments.push(comments[i])
-    }
+    });
+    
+    
 
 
-    res.json(newComments)
+    res.json(organizedComments)
 }
